@@ -5,6 +5,11 @@
 class Matrix3x3f {
 	public:
 	float data[9];
+
+	// row major layout, ie the entries are given in this order
+	// 	| 0 1 2 |
+	//  | 3 4 5 |
+	//  | 6 7 8 |
 };
 
 class Vec3f {
@@ -21,4 +26,9 @@ class Vec3f {
 	float z;
 };
 
-Vec3f ZYZ_angles_from_rotation_matrix(const Matrix3x3f& R);
+Vec3f ZXZ_angles_from_rotation_matrix(const Matrix3x3f& R);
+Vec3f RPY_angles_from_rotation_matrix(const Matrix3x3f& R);
+
+Matrix3x3f get_rotation_matrix_around_X_axis(float angle);
+Matrix3x3f get_rotation_matrix_around_Y_axis(float angle);
+Matrix3x3f get_rotation_matrix_around_Z_axis(float angle);
