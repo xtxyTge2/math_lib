@@ -18,6 +18,10 @@ Quaternion operator+(const Quaternion& q, const Quaternion& p)
 	return Quaternion(q.r + p.r, q.i + p.i, q.j + p.j, q.k + p.k);
 }
 
+Quaternion operator*(float scalar, const Quaternion& q) {
+	return Quaternion(scalar * q.r, scalar * q.i, scalar * q.j, scalar * q.k);
+}
+
 Vec3f rotate_point_around_rotation_axis_and_angle(const Vec3f v, const Vec3f& axis, float theta) 
 {
 	Quaternion rotation_quat = get_quaternion_from_rotation_axis_and_angle(axis, theta);
@@ -46,4 +50,13 @@ Vec3f rotate_point_by_unit_quaternion(const Vec3f& v, const Quaternion p)
 
 	Quaternion res = p * q_v * p.conjugate(); 
 	return res.Im(); 
+}
+
+Quaternion slerp(const Quaternion& p, const Quaternion& q, float t)
+{
+	assert(t >= 0.0f && t <= 1.0f);
+
+	float theta = acos(p.dot(q));
+
+	return (sin((1-t)*theta) / sin(theta)) * p + (sin(t * theta) / sin(theta)) * q;
 }

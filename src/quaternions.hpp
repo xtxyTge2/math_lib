@@ -49,6 +49,11 @@ public:
 	{
 		return Vec3f(i, j, k);
 	}
+
+	float dot(const Quaternion& p) const 
+	{
+		return r * p.r + i * p.i + j * p.j + k * p.k;
+	}
 };
 
 Quaternion operator*(const Quaternion& q, const Quaternion& p);
@@ -58,3 +63,5 @@ Quaternion operator+(const Quaternion& q, const Quaternion& p);
 Vec3f rotate_point_around_rotation_axis_and_angle(const Vec3f v, const Vec3f& axis, float theta);
 Quaternion get_quaternion_from_rotation_axis_and_angle(const Vec3f& v, float theta);
 Vec3f rotate_point_by_unit_quaternion(const Vec3f& v, const Quaternion p);
+
+Quaternion slerp(const Quaternion& p, const Quaternion& q);
