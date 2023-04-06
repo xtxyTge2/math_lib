@@ -29,6 +29,31 @@ public:
 		, j(a_j)
 		, k(a_k)
 	{};
+
+	Quaternion conjugate() const
+	{
+		return Quaternion(r, -i, -j, -k);
+	};
+
+	float norm() const
+	{
+		return sqrt(r*r + i*i + j*j + k*k);
+	}
+
+	float Re() const
+	{
+		return r;
+	}
+
+	Vec3f Im() const
+	{
+		return Vec3f(i, j, k);
+	}
 };
 
 Quaternion operator*(const Quaternion& q, const Quaternion& p);
+Quaternion operator+(const Quaternion& q, const Quaternion& p);
+
+
+Quaternion quaternion_from_rotation_axis_and_angle(const Vec3f& v, float theta);
+Vec3f rotate_point_by_quaternion(const Vec3f& v, const Quaternion q);

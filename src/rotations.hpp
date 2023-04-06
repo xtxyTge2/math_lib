@@ -11,6 +11,10 @@ public:
 		, z(a_z) 
 	{}
 
+	float norm() const
+	{
+		return sqrt(x*x + y*y + z*z);
+	}
 public:
 	float x;
 	float y;
@@ -65,7 +69,7 @@ class Matrix3x3f {
 		return data[3 * r + c];
 	}
 
-	std::string to_string() {
+	std::string to_string() const {
 		return std::format("|{:.12f} {:.12f} {:.12f}|\n|{:.12f} {:.12f} {:.12f}|\n|{:.12f} {:.12f} {:.12f}|\n", data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]);
 	}
 
