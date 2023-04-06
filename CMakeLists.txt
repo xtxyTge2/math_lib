@@ -22,16 +22,18 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(
-  rotations_test
+  math_lib_tests
   "src/rotations.cpp"
-  
+  "src/quaternions.cpp"
+
   "src/rotations_test.cpp"
+  "src/quaternions_test.cpp"
 )
 
 target_link_libraries(
-  rotations_test
+  math_lib_tests
   GTest::gtest_main
 )
 
 include(GoogleTest)
-gtest_discover_tests(rotations_test)
+gtest_discover_tests(math_lib_tests)

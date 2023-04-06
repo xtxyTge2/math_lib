@@ -1,6 +1,12 @@
-
+#include "rotations.hpp"
 
 class Quaternion {
+public:
+	float r;
+	float i;
+	float j;
+	float k;
+
 	Quaternion() = default;
 
 	Quaternion(float a_r) :
@@ -10,7 +16,7 @@ class Quaternion {
 		, k(0.0f)
 	{};
 
-	Quaternion(Vec3f v) :
+	Quaternion(const Vec3f& v) :
 		r(0.0f)
 		, i(v.x)
 		, j(v.y)
@@ -23,12 +29,6 @@ class Quaternion {
 		, j(a_j)
 		, k(a_k)
 	{};
-
-private:
-	float r;
-	float i;
-	float j;
-	float k;
 };
 
 Quaternion operator*(const Quaternion& q, const Quaternion& p);
