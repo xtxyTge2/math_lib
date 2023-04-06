@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include "quaternions.hpp"
 
@@ -108,5 +109,22 @@ namespace {
 		EXPECT_FLOAT_EQ(kj.i, -1.0f);
 		EXPECT_FLOAT_EQ(kj.j, 0.0f);
 		EXPECT_FLOAT_EQ(kj.k, 0.0f);
+	}
+
+	TEST(quaternions_test, rotate_point_around_rotation_axis_and_angle) 
+	{
+
+		// Test a basic rotation of a point by 90 degrees around the x-axis
+		Vec3f v(1.0f, 0.0f, 9.0f);
+		Vec3f rotation_axis(1.0f, 0.0f, 0.0f);
+		float rotation_angle = M_PI_2; 
+
+		Vec3f p_rotated  = rotate_point_around_rotation_axis_and_angle(v, rotation_axis, rotation_angle);
+
+		Vec3f p_expected(1.0f, -9.0f, 0.0f); 
+
+		EXPECT_FLOAT_EQ(p_rotated.x, p_expected.x);
+		EXPECT_FLOAT_EQ(p_rotated.y, p_expected.y);
+		EXPECT_FLOAT_EQ(p_rotated.z, p_expected.z);
 	}
 } // namespace

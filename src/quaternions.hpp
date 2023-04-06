@@ -55,5 +55,6 @@ Quaternion operator*(const Quaternion& q, const Quaternion& p);
 Quaternion operator+(const Quaternion& q, const Quaternion& p);
 
 
-Quaternion quaternion_from_rotation_axis_and_angle(const Vec3f& v, float theta);
-Vec3f rotate_point_by_quaternion(const Vec3f& v, const Quaternion q);
+Vec3f rotate_point_around_rotation_axis_and_angle(const Vec3f v, const Vec3f& axis, float theta);
+Quaternion get_quaternion_from_rotation_axis_and_angle(const Vec3f& v, float theta);
+Vec3f rotate_point_by_unit_quaternion(const Vec3f& v, const Quaternion p);
