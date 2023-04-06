@@ -1,6 +1,29 @@
 #include "rotations.hpp"
 
 
+
+Matrix3x3f operator *(const Matrix3x3f& M, const Matrix3x3f& N)
+{
+	return Matrix3x3f(M(0,0) * N(0,0) + M(0,1) * N(1, 0) + M(0, 2) * N(2, 0), 
+	                  M(0,0) * N(0,1) + M(0,1) * N(1, 1) + M(0, 2) * N(2, 1),
+	                  M(0,0) * N(0,2) + M(0,1) * N(1, 2) + M(0, 2) * N(2, 2),
+
+	                  M(1,0) * N(0,0) + M(1,1) * N(1, 0) + M(1, 2) * N(2, 0),
+	                  M(1,0) * N(0,1) + M(1,1) * N(1, 1) + M(1, 2) * N(2, 1),
+	                  M(1,0) * N(0,2) + M(1,1) * N(1, 2) + M(1, 2) * N(2, 2),
+	                  
+	                  M(2,0) * N(0,0) + M(2,1) * N(1, 0) + M(2, 2) * N(2, 0),
+	                  M(2,0) * N(0,1) + M(2,1) * N(1, 1) + M(2, 2) * N(2, 1),
+	                  M(2, 0) * N(0, 2) + M(2, 1) * N(1, 2) + M(2, 2) * N(2, 2));
+};
+
+Vec3f operator *(const Matrix3x3f M, const Vec3f& v) 
+{
+	return Vec3f(M(0,0) * v.x + M(0, 1) * v.y + M(0, 2) * v.z,
+	             M(1,0) * v.x + M(1, 1) * v.y + M(1, 2) * v.z,
+	             M(2, 0) * v.x + M(2, 1) * v.y + M(2, 2) * v.z);
+}
+
 /*
 	Computes the Euler-Angles in the "ZX'Z''"-convention from a rotation matrix R (that is, R has orthogonal and unit-length column (or equivalently row) vectors). 
 
@@ -35,43 +58,42 @@ Vec3f ZXZ_angles_from_rotation_matrix(const Matrix3x3f& R) {
 	float gamma = 0.0f;
 
 	// R_33
-	if(R.data[8] == 1.0f) {
+	if(R(2,2) == 1.0f) {
 		beta = 0.0f;
-		// R_11 = R[0][0] // care with 0 indices etc! R_11 is actually R[0][0] probably!
-		if(R.data[0] == 0.0f) {
+		if(R(0,0) == 0.0f) {
 			gamma = 0.0f;
 			alpha = M_PI_2;
 		} else {
 			gamma = 0.0f; // arbitrary value, hence we let the -gamma below stay, so that we dont forget it if we change this arbitrary value later
 			// R_21, R_11
-			alpha = -gamma + atan2(R.data[3], R.data[0]);
+			alpha = -gamma + atan2(R(1,0), R(0,0));
 		} 
-	} else if(R.data[8] == -1.0f) {
+	} else if(R(2,2) == -1.0f) {
 		beta = 3 * M_PI_2; // 3/2 pi
 		// R_12
-		if(R.data[1] == 0.0f) {
+		if(R(0,1) == 0.0f) {
 			alpha = 0.0f;
 			gamma = 0.0f;
 		} else {
 			gamma = 0.0f;
 			// R_11, R_12
-			alpha = -gamma - M_PI_2 + atan2(-R.data[0], R.data[1]);
+			alpha = -gamma - M_PI_2 + atan2(-R(0,0), R(0,1));
 		}
 	} else { // non degenerate case
-		beta = acos(R.data[8]);
+		beta = acos(R(2,2));
 		// R_32
-		if(R.data[7] == 0.0f) {
+		if(R(2, 1) == 0.0f) {
 			gamma = M_PI_2;
 		} else {
 			// R_31, R_32
-			gamma = atan2(R.data[6], R.data[7]);
+			gamma = atan2(R(2, 0), R(2, 1));
 		}
 
-		if(R.data[6] == 0.0f) {
+		if(R(1, 2) == 0.0f) {
 			alpha = M_PI_2;
 		} else {
 			// R_13, R_23
-			alpha = atan2(-R.data[2], R.data[6]);
+			alpha = atan2(-R(0, 2), R(1, 2));
 		}
 	}
 
@@ -85,44 +107,44 @@ Vec3f RPY_angles_from_rotation_matrix(const Matrix3x3f& R) {
 	float gamma = 0.0f;
 
 	// R_31
-	if(R.data[6] == 1.0f) {
+	if(R(2,0) == 1.0f) {
 		beta = 3 * M_PI_2; // 3/2 pi
 		// R_13
-		if(R.data[2] == 0.0f) {
+		if(R(0, 2) == 0.0f) {
 			gamma = 0.0f;
 			alpha = M_PI_2;
 		} else {
 			gamma = 0.0f; // arbitrary value, hence we let the -gamma below stay, so that we dont forget it if we change this arbitrary value later
 			// R_12, R_13
-			alpha = -gamma + atan2(R.data[1], R.data[2]);
+			alpha = -gamma + atan2(R(0, 1), R(0, 2));
 		} 
 		//R_31
-	} else if(R.data[6] == -1.0f) {
+	} else if(R(2, 0) == -1.0f) {
 		beta = M_PI_2; // pi/2
 		// R_13
-		if(R.data[2] == 0.0f) {
+		if(R(0, 2) == 0.0f) {
 			gamma = 0.0f;
 			alpha = M_PI_2;
 		} else {
 			gamma = 0.0f;
 			// R_12, R_13
-			alpha = gamma + atan2(R.data[1], R.data[2]);
+			alpha = gamma + atan2(R(0, 1), R(0, 2));
 		}
 	} else { // non degenerate case
-		beta = asin(-R.data[6]);
+		beta = asin(-R(2, 0));
 		// R_33
-		if(R.data[8] == 0.0f) {
+		if(R(2, 2) == 0.0f) {
 			alpha = M_PI_2;
 		} else {
 			// R_32, R_33
-			alpha = atan2(R.data[7], R.data[8]);
+			alpha = atan2(R(2, 1), R(2, 2));
 		}
 		// R_11
-		if(R.data[0] == 0.0f) {
+		if(R(0,0) == 0.0f) {
 			gamma = M_PI_2;
 		} else {
 			// R_21, R_11
-			gamma = atan2(R.data[3], R.data[0]);
+			gamma = atan2(R(1, 0), R(0, 0));
 		}
 	}
 
@@ -135,22 +157,9 @@ Matrix3x3f get_rotation_matrix_around_X_axis(float theta) {
 	float c = cos(theta);
 	float s = sin(theta);
 
-	// first row
-	R.data[0] = 1.0f;
-	R.data[1] = 0.0f;
-	R.data[2] = 0.0f;
-	
-	// second row
-	R.data[3] = 0.0f;
-	R.data[4] = c;
-	R.data[5] = -s;
-
-	// third row
-	R.data[6] = 0.0f;
-	R.data[7] = s;
-	R.data[8] = c;
-
-	return R;
+	return Matrix3x3f(1.0f, 0.0f, 0.0f, 
+	                  0.0f, c, -s, 
+	                  0.0f, s, c);
 }
 
 
@@ -160,22 +169,9 @@ Matrix3x3f get_rotation_matrix_around_Y_axis(float theta) {
 	float c = cos(theta);
 	float s = sin(theta);
 
-	// first row
-	R.data[0] = c;
-	R.data[1] = 0.0f;
-	R.data[2] = s;
-	
-	// second row
-	R.data[3] = 0.0f;
-	R.data[4] = 1.0f;
-	R.data[5] = 0.0f;
-
-	// third row
-	R.data[6] = -s;
-	R.data[7] = 0.0f;
-	R.data[8] = c;
-
-	return R;
+	return Matrix3x3f(c, 0.0f, s, 0.0f, 
+	                  1.0f, 0.0f, 
+	                  -s, 0.0f, c);
 }
 
 Matrix3x3f get_rotation_matrix_around_Z_axis(float theta) {
@@ -184,20 +180,7 @@ Matrix3x3f get_rotation_matrix_around_Z_axis(float theta) {
 	float c = cos(theta);
 	float s = sin(theta);
 
-	// first row
-	R.data[0] = c;
-	R.data[1] = -s;
-	R.data[2] = 0.0f;
-	
-	// second row
-	R.data[3] = s;
-	R.data[4] = c;
-	R.data[5] = 0.0f;
-
-	// third row
-	R.data[6] = 0.0f;
-	R.data[7] = 0.0f;
-	R.data[8] = 1.0f;
-
-	return R;
+	return Matrix3x3f(c, -s, 0.0f, 
+	                  s, c, 0.0f, 
+	                  0.0f, 0.0f, 1.0f);
 }
